@@ -1,22 +1,61 @@
-function getPaginatedResult(studentInfo, page, limit){
-    if(!Array.isArray(studentInfo) || studentInfo.length <= 0 || typeof page != 'number' || typeof limit != 'number'){
-        return "Provide proper information to get the result";
-    }else if(!(limit * (page - 1) + limit <= studentInfo.length)){
-        return "Provide a valid page number and limit";
+function findBestAverageState(studentInformation){
+    if(!Array.isArray(studentInformation) || !(studentInformation.length)){
+        return "Provide proper student information to get the result";
     }
-    const paginatedResult = [];
-    let noOfPages = limit, pageNumber = (limit*(page-1));
-    for(; noOfPages > 0; noOfPages--){
-        paginatedResult.push(studentInfo[pageNumber]);
-        pageNumber++;
+    const studentInfo = studentInformation;
+    const states = {};
+    for(let infoIndex = 0; infoIndex < studentInfo.length; infoIndex++){
+        const currentStudent = studentInfo[infoIndex];
+        if(typeof currentStudent.state !== 'string' || !(currentStudent.state.length) || typeof currentStudent.english != 'number' || typeof currentStudent.maths != 'number' || typeof currentStudent.science != 'number' || typeof currentStudent.social != 'number' || currentStudent.english < 0 || currentStudent.maths < 0 || currentStudent.science < 0 || currentStudent.social < 0 || typeof currentStudent.first_name != 'string' || typeof currentStudent.last_name != 'string' || !(currentStudent.last_name.length) || !(currentStudent.first_name.length)) {
+            return "Provide proper information for the students";
+        }
+        if(!([currentStudent.state] in states))  {
+            states[currentStudent.state] = {};
+            states[currentStudent.state].average = 0;
+            states[currentStudent.state].studentCount = 0;
+        }
+        const {state, english, maths, science, social, first_name, last_name} = currentStudent;
+        states[currentStudent.state].average = states[currentStudent.state].average + (english + maths + science + social)/4;
+        states[currentStudent.state].studentCount = states[currentStudent.state].studentCount + 1;
     }
-    return paginatedResult;
+    for(const state in states) {
+        states[state].stateAverage = states[state].average/states[state].studentCount;
+    }
+    const bestAverageStates = [];
+    let maximumAverage = 0;
+    for(const state in states) {
+        if(states[state].stateAverage > maximumAverage){
+            maximumAverage = states[state].stateAverage;
+        }
+    }
+    for(const state in states) {
+        if(states[state].stateAverage == maximumAverage) {
+            bestAverageStates.push(state);
+        }
+    }
+    const leastAverageStates = [];
+    let minimumAverage = 1000;
+    for(const state in states) {
+        if(states[state].stateAverage < minimumAverage){
+            minimumAverage = states[state].stateAverage;
+        }
+    }
+    for(const state in states) {
+        if(states[state].stateAverage == minimumAverage) {
+            leastAverageStates.push(state);
+        }
+    }
+    const bestAndLeastAverageStates = {};
+    bestAndLeastAverageStates.statesWithBestAverage = bestAverageStates;
+    bestAndLeastAverageStates.statesWithLeastAverage = leastAverageStates;
+    return bestAndLeastAverageStates;
 }
-console.log(getPaginatedResult([
+
+console.log(findBestAverageState([
     {"id":1,"first_name":"Darby","last_name":"Headrick","email":"dheadrick0@discovery.com","state":"AZ","science":42,"maths":12,"english":12,"social":65},
     {"id":2,"first_name":"Chariot","last_name":"Jermy","email":"cjermy1@cpanel.net","state":"AL","science":31,"maths":84,"english":8,"social":95},
-    {"id":3,"first_name":"Dasya","last_name":"Le Marchand","email":"dlemarchand2@adobe.com","state":"KY","science":2,"maths":29,"english":45,"social":69},
-    {"id":4,"first_name":"Alanson","last_name":"O'Doghesty","email":"aodoghesty3@tiny.cc","state":"FL","science":29,"maths":61,"english":61,"social":56},
+    {"id":3,"first_name":"Dasya","last_name":"Le Marchand","email":"dlemarchand2@adobe.com","state":"AZ","science":2,"maths":29,"english":45,"social":69},
+    {"id":4,"first_name":"Alanson","last_name":"O'Doghesty","email":"aodoghesty3@tiny.cc","state":"AL","science":29,"maths":61,"english":61,"social":56},
     {"id":5,"first_name":"Alric","last_name":"Tumbridge","email":"atumbridge4@dyndns.org","state":"AZ","science":61,"maths":39,"english":96,"social":10},
     {"id":6,"first_name":"Felecia","last_name":"Bandy","email":"fbandy5@nbcnews.com","state":"CT","science":98,"maths":34,"english":84,"social":92},
     {"id":7,"first_name":"Basile","last_name":"Spoole","email":"bspoole6@nyu.edu","state":"TX","science":14,"maths":5,"english":83,"social":27},
@@ -113,4 +152,4 @@ console.log(getPaginatedResult([
     {"id":98,"first_name":"Jamaal","last_name":"Methingam","email":"jmethingam2p@gmpg.org","state":"GA","science":58,"maths":41,"english":63,"social":19},
     {"id":99,"first_name":"Mirna","last_name":"Petters","email":"mpetters2q@51.la","state":"NY","science":81,"maths":91,"english":94,"social":35},
     {"id":100,"first_name":"Anni","last_name":"Heitz","email":"aheitz2r@seesaa.net","state":"TX","science":1,"maths":6,"english":80,"social":7}
-    ], 0, 1));
+    ]))

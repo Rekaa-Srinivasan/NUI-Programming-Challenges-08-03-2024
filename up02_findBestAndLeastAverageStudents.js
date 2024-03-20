@@ -1,21 +1,43 @@
-function getPaginatedResult(studentInfo, page, limit){
-    if(!Array.isArray(studentInfo) || studentInfo.length <= 0 || typeof page != 'number' || typeof limit != 'number'){
-        return "Provide proper information to get the result";
-    }else if(!(limit * (page - 1) + limit <= studentInfo.length)){
-        return "Provide a valid page number and limit";
+function findBestAndLeastAverageStudents(studentInfo){
+    if(!Array.isArray(studentInfo) || !(studentInfo.length)){
+        return "Provide a proper information to calculate the best average";
     }
-    const paginatedResult = [];
-    let noOfPages = limit, pageNumber = (limit*(page-1));
-    for(; noOfPages > 0; noOfPages--){
-        paginatedResult.push(studentInfo[pageNumber]);
-        pageNumber++;
+    const averageOfStudents = [];
+    for(let infoIndex = 0; infoIndex < studentInfo.length; infoIndex++){
+        const currentStudentInfo = studentInfo[infoIndex];
+        if(typeof currentStudentInfo.english != 'number' || typeof currentStudentInfo.maths != 'number' || typeof currentStudentInfo.science != 'number' || typeof currentStudentInfo.social != 'number' || currentStudentInfo.english < 0 || currentStudentInfo.maths < 0 || currentStudentInfo.science < 0 || currentStudentInfo.social < 0 || typeof currentStudentInfo.first_name != 'string' || typeof currentStudentInfo.last_name != 'string' || !(currentStudentInfo.last_name.length) || !(currentStudentInfo.first_name.length)){
+            return "Provide proper marks/name for the students";
+        }
+        const {english, maths, science, social} = currentStudentInfo;
+        const average = (english + maths + science + social)/4;
+        averageOfStudents.push(average);
     }
-    return paginatedResult;
+    const bestAverageStudents = [];
+    const bestAverage = Math.max(...averageOfStudents);
+    
+    for(let initialIndex = 0; initialIndex < averageOfStudents.length; initialIndex++){
+        if(averageOfStudents[initialIndex] === bestAverage){
+            bestAverageStudents.push(studentInfo[initialIndex].first_name+" "+studentInfo[initialIndex].last_name);
+        }
+    }
+    const leastAverageStudents = [];
+    const leastAverage = Math.min(...averageOfStudents);
+    
+    for(let initialIndex = 0; initialIndex < averageOfStudents.length; initialIndex++){
+        if(averageOfStudents[initialIndex] === leastAverage){
+            leastAverageStudents.push(studentInfo[initialIndex].first_name+" "+studentInfo[initialIndex].last_name);
+        }
+    }
+    const bestAndLeastAverageStudents = {};
+    bestAndLeastAverageStudents.studentsWithBestAverage = bestAverageStudents;
+    bestAndLeastAverageStudents.studentsWithLeastAverage = leastAverageStudents;
+    return bestAndLeastAverageStudents;
 }
-console.log(getPaginatedResult([
-    {"id":1,"first_name":"Darby","last_name":"Headrick","email":"dheadrick0@discovery.com","state":"AZ","science":42,"maths":12,"english":12,"social":65},
-    {"id":2,"first_name":"Chariot","last_name":"Jermy","email":"cjermy1@cpanel.net","state":"AL","science":31,"maths":84,"english":8,"social":95},
-    {"id":3,"first_name":"Dasya","last_name":"Le Marchand","email":"dlemarchand2@adobe.com","state":"KY","science":2,"maths":29,"english":45,"social":69},
+
+console.log(findBestAndLeastAverageStudents([
+    {"id":1,"first_name":"Darby","last_name":"Headrick","email":"dheadrick0@discovery.com","state":"AZ","science":0,"maths":0,"english":1,"social":1},
+    {"id":2,"first_name":"Chariot","last_name":"Jermy","email":"cjermy1@cpanel.net","state":"AL","science":0,"maths":0,"english":1,"social":1},
+    {"id":3,"first_name":"Dasya","last_name":"Le Marchand","email":"dlemarchand2@adobe.com","state":"KY","science":0,"maths":0,"english":1,"social":1},
     {"id":4,"first_name":"Alanson","last_name":"O'Doghesty","email":"aodoghesty3@tiny.cc","state":"FL","science":29,"maths":61,"english":61,"social":56},
     {"id":5,"first_name":"Alric","last_name":"Tumbridge","email":"atumbridge4@dyndns.org","state":"AZ","science":61,"maths":39,"english":96,"social":10},
     {"id":6,"first_name":"Felecia","last_name":"Bandy","email":"fbandy5@nbcnews.com","state":"CT","science":98,"maths":34,"english":84,"social":92},
@@ -89,7 +111,7 @@ console.log(getPaginatedResult([
     {"id":74,"first_name":"Helenelizabeth","last_name":"Kee","email":"hkee21@google.pl","state":"NY","science":39,"maths":41,"english":21,"social":60},
     {"id":75,"first_name":"Bambi","last_name":"Thurber","email":"bthurber22@eventbrite.com","state":"MD","science":33,"maths":82,"english":5,"social":71},
     {"id":76,"first_name":"Penrod","last_name":"Fairney","email":"pfairney23@huffingtonpost.com","state":"KS","science":79,"maths":50,"english":28,"social":57},
-    {"id":77,"first_name":"Goldy","last_name":"McCarron","email":"gmccarron24@hao123.com","state":"OH","science":68,"maths":45,"english":73,"social":54},
+    {"id":77,"first_name":"Goldy","last_name":"McCarron","email":"gmccarron24@hao123.com","state":"OH","science":97,"maths":100,"english":73,"social":81},
     {"id":78,"first_name":"Johnna","last_name":"Krzysztofiak","email":"jkrzysztofiak25@photobucket.com","state":"SC","science":97,"maths":100,"english":81,"social":73},
     {"id":79,"first_name":"Karel","last_name":"Rubinowitch","email":"krubinowitch26@amazon.de","state":"OH","science":1,"maths":1,"english":86,"social":21},
     {"id":80,"first_name":"Cece","last_name":"Buckam","email":"cbuckam27@goo.gl","state":"NC","science":30,"maths":38,"english":7,"social":9},
@@ -113,4 +135,4 @@ console.log(getPaginatedResult([
     {"id":98,"first_name":"Jamaal","last_name":"Methingam","email":"jmethingam2p@gmpg.org","state":"GA","science":58,"maths":41,"english":63,"social":19},
     {"id":99,"first_name":"Mirna","last_name":"Petters","email":"mpetters2q@51.la","state":"NY","science":81,"maths":91,"english":94,"social":35},
     {"id":100,"first_name":"Anni","last_name":"Heitz","email":"aheitz2r@seesaa.net","state":"TX","science":1,"maths":6,"english":80,"social":7}
-    ], 0, 1));
+    ]));
